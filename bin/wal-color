@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+# Prints the named color (red/green/blue/...) nearest to the pywal accent (color9).
+import json, os
+named={"red":(229,30,55),"green":(60,200,90),"yellow":(240,220,60),"blue":(70,120,230),
+       "magenta":(210,80,210),"cyan":(60,200,210),"white":(230,230,230)}
+try:
+    c=json.load(open(os.path.expanduser("~/.cache/wal/colors.json")))["colors"]["color9"].lstrip("#")
+    r,g,b=int(c[0:2],16),int(c[2:4],16),int(c[4:6],16)
+    print(min(named,key=lambda n:sum((x-y)**2 for x,y in zip(named[n],(r,g,b)))))
+except Exception:
+    print("green")

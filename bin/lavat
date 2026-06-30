@@ -1,0 +1,37 @@
+#!/bin/bash
+# Adaptive lavat: vivid pywal colors that re-apply LIVE on wallpaper change (auto-restart).
+REAL="/usr/bin/lavat"
+COLORS="$HOME/.cache/wal/colors.json"
+
+boost() {
+python3 - <<'PY'
+import json, os, colorsys
+def b(h):
+    h = h.lstrip('#'); r,g,bl = (int(h[i:i+2],16)/255 for i in (0,2,4))
+    hh,s,v = colorsys.rgb_to_hsv(r,g,bl)
+    r,g,bl = colorsys.hsv_to_rgb(hh, max(s,0.7), max(v,0.85))
+    return f"{int(r*255):02X}{int(g*255):02X}{int(bl*255):02X}"
+c = json.load(open(os.path.expanduser("~/.cache/wal/colors.json")))["colors"]
+print(b(c["color9"]), b(c["color4"]))
+PY
+}
+
+LPID=""
+trap '[ -n "$LPID" ] && kill "$LPID" 2>/dev/null; exit 0' INT TERM EXIT
+
+while true; do
+    read -r c1 c2 < <(boost)
+    [ -z "$c1" ] && { c1=FF5500; c2=FFC400; }
+    "$REAL" -g -c "$c1" -k "$c2" "$@" </dev/null &
+    LPID=$!
+    last=$(stat -c %Y "$COLORS" 2>/dev/null)
+    changed=0
+    while kill -0 "$LPID" 2>/dev/null; do
+        sleep 1
+        cur=$(stat -c %Y "$COLORS" 2>/dev/null)
+        if [ "$cur" != "$last" ]; then
+            changed=1; kill "$LPID" 2>/dev/null; wait "$LPID" 2>/dev/null; break
+        fi
+    done
+    [ "$changed" = 0 ] && exit 0
+done

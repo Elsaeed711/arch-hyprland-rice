@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch meowrch wallpaper/theme changes to regenerate pywal colors
+
+[Path]
+# meowrch rewrites config.yaml whenever the wallpaper or theme changes
+PathChanged=%h/.config/meowrch/config.yaml
+Unit=meowrch-pywal.service
+
+[Install]
+WantedBy=default.target

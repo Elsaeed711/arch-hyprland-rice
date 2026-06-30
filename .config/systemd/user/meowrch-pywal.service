@@ -1,0 +1,6 @@
+[Unit]
+Description=Apply pywal colors from the current meowrch wallpaper
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/pywal-reload.sh

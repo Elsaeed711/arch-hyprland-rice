@@ -1,0 +1,8 @@
+*.bak
+*.bak[0-9]
+*.save
+*.pyc
+__pycache__/
+*.mp4
+*.mp3
+.cache/

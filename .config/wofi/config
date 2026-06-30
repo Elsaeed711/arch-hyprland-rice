@@ -1,0 +1,17 @@
+stylesheet=style.css
+show=drun
+matching=contains
+no_actions=true
+width=550
+height=325
+always_parse_args=true
+show_all=true
+layer=overlay
+insensitive=true
+prompt=Search for Application
+allow_markup=true
+allow_images=true
+location=bottom
+yoffset=-80
+sort_order=default
+cache_file=/home/Void/.cache/wofi-drun

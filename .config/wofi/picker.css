@@ -1,0 +1,46 @@
+/* Wallpaper/theme picker — image grid, pywal accent. */
+@import url('/home/Void/.cache/wal/colors-waybar.css');
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-weight: bold;
+}
+
+window {
+  margin: 0px;
+  background-color: #000000;
+  border: 3px solid @color9;
+  border-radius: 16px;
+  padding: 8px;
+}
+
+#input {
+  margin: 8px;
+  padding: 10px;
+  border: 2px solid @color9;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #111111;
+  outline: none;
+  box-shadow: none;
+}
+
+#input:focus { border: 2px solid @color9; outline: none; }
+
+#scroll { margin: 6px; }
+
+#inner-box { margin: 4px; }
+
+#entry {
+  padding: 6px;
+  margin: 6px;
+  border-radius: 12px;
+  background-color: transparent;
+}
+
+#entry:selected { background-color: @color9; }
+#entry:selected #text { color: #000000; font-weight: bold; }
+
+#img { margin-right: 8px; border-radius: 8px; }
+
+#text { color: #ffffff; }
