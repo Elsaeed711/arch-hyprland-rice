@@ -15,8 +15,9 @@ hl.exec_cmd("sh -c 'source ~/.env'")
 local function daemon(proc, cmd) hl.exec_cmd("sh -c 'pgrep -x " .. proc .. " >/dev/null || " .. (cmd or proc) .. "'") end
 daemon("swaync")
 daemon("hypridle")
-daemon("swww-daemon")
 daemon("udiskie", "udiskie --no-automount --smart-tray")
+-- NOTE: swww-daemon is started by apply-theme-wallpaper.sh (below) on the REAL
+-- WAYLAND_DISPLAY; starting it here (too early) bound it to wayland-0 → black bg.
 hl.exec_cmd("sh -c 'pgrep -f \"wl-paste --type text\" >/dev/null || wl-paste --type text --watch cliphist store'")
 hl.exec_cmd("sh -c 'pgrep -f \"wl-paste --type image\" >/dev/null || wl-paste --type image --watch cliphist store'")
 hl.exec_cmd(HOME .. "/bin/start-waybar.sh")
