@@ -1,36 +1,3 @@
-# 🌌 Hyprland Dotfiles
-
-My Arch + Hyprland rice — a wallpaper-driven (pywal) setup, integrated with the meowrch theme engine.
-
-## 🚀 Installation (fresh Arch → full setup)
-
-On a clean Arch install, one command restores the whole system — packages, configs, services, plugin, and shell:
-
-```bash
-git clone https://github.com/Elsaeed711/arch-hyprland-rice.git ~/arch-hyprland-rice
-cd ~/arch-hyprland-rice
-./setup.sh
-```
-
-`setup.sh` does the following (logging any failures to `setup.log` and continuing past them):
-
-1. installs **paru** + every package — `packages/pacman.txt` (repo) and `packages/aur.txt` (AUR)
-2. backs up your existing `~/.config`, then deploys this repo's `.config` + `bin`
-3. enables **sddm · NetworkManager · bluetooth · pipewire · meowrch-pywal**
-4. sets **zsh** as the login shell and installs **oh-my-zsh**
-5. installs the **scrolloverview** Hyprland plugin via `hyprpm`
-
-Then **reboot**, choose **Hyprland** in SDDM, and log in.
-
-> The Hyprland plugin needs a running session — if step 5 is skipped, run it after first login:
-> ```bash
-> hyprpm update && hyprpm add https://github.com/yayuuu/hyprland-scroll-overview && hyprpm enable scrolloverview
-> ```
-
-<details>
-<summary><b>📜 setup.sh — the full script</b></summary>
-
-```bash
 #!/usr/bin/env bash
 # =============================================================================
 #  arch-hyprland-rice  —  full-system bootstrap
@@ -135,29 +102,3 @@ cat <<EOF
    • wallpapers / lockscreen pic aren't in the repo — drop your own in
    • detailed failures (if any): $LOG
 EOF
-```
-
-</details>
-
-## Components
-- **Hyprland** — window manager (`.config/hypr/`)
-- **Waybar** — bar with custom adaptive modules (volume follows buds, scrolling now-playing, brightness, gpu, battery, network…)
-- **wofi** — app launcher · **rofi** — image-grid wallpaper/theme picker
-- **hyprlock** — lock · **wlogout** — power menu · **swaync** — notifications
-- **kitty** · **cava** · **fastfetch** · **btop**
-
-## Theming (pywal: wallpaper → colors)
-Changing the wallpaper regenerates the palette with `wal`; `bin/pywal-reload.sh` (fired by a systemd path unit) pushes the new colors to waybar, cava, kitty, the rofi picker, and `lavat`, so the whole system recolors with the background.
-
-## Fun scripts (`bin/`)
-- `dvd-bounce.py` — DVD-logo bouncing-windows screensaver (toggle: Super+Shift+D)
-- `lavat` — adaptive lava-lamp wrapper (vivid pywal colors, live re-skin)
-- `wb-*.sh` — the waybar module scripts
-
-## Dependencies
-hyprland hyprlock hypridle waybar wofi rofi swaync kitty cava fastfetch btop wlogout
-pywal16 swww brightnessctl playerctl wpctl nmcli blueman + **[meowrch](https://github.com/meowrch/meowrch)** (wallpaper/theme engine, cloned separately).
-
-## Notes
-- Paths are hardcoded for user `Void` — adjust if you clone.
-- The lock screen profile pic and wallpapers aren't included (personal/large) — drop your own in.

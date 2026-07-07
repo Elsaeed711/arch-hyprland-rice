@@ -1,5 +1,9 @@
 [Unit]
 Description=Apply pywal colors from the current meowrch wallpaper
+# meowrch rewrites config.yaml several times per wallpaper change, which tripped
+# the default 5-starts/10s limit and stopped the .path unit. Allow generous bursts.
+StartLimitIntervalSec=60
+StartLimitBurst=50
 
 [Service]
 Type=oneshot
