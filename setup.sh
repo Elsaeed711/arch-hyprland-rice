@@ -101,7 +101,21 @@ fi
 # ── 7. GRUB theme (calm) ─────────────────────────────────────────────────────
 info "GRUB theme: calm"
 if command -v grub-mkconfig >/dev/null 2>&1 && [ -d /boot/grub ]; then
-  sudo bash "$REPO/grub-calm/install.sh" >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
+  GT="$REPO/grub-calm"
+  sudo mkdir -p /boot/grub/themes/calm
+  sudo cp -f "$GT"/theme.txt "$GT"/background.png "$GT"/font-*.pf2 "$GT"/select_*.png /boot/grub/themes/calm/
+  sudo cp -f /etc/default/grub "/etc/default/grub.bak.$(date +%Y%m%d-%H%M%S)"
+  if grep -q '^GRUB_THEME=' /etc/default/grub; then
+    sudo sed -i 's#^GRUB_THEME=.*#GRUB_THEME="/boot/grub/themes/calm/theme.txt"#' /etc/default/grub
+  else
+    echo 'GRUB_THEME="/boot/grub/themes/calm/theme.txt"' | sudo tee -a /etc/default/grub >/dev/null
+  fi
+  if grep -q '^GRUB_GFXMODE=' /etc/default/grub; then
+    sudo sed -i 's#^GRUB_GFXMODE=.*#GRUB_GFXMODE=1920x1080,auto#' /etc/default/grub
+  else
+    echo 'GRUB_GFXMODE=1920x1080,auto' | sudo tee -a /etc/default/grub >/dev/null
+  fi
+  sudo grub-mkconfig -o /boot/grub/grub.cfg >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
 else
   warn "grub not detected — skipping grub theme"
 fi

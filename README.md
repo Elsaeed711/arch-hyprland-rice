@@ -135,7 +135,21 @@ fi
 # ── 7. GRUB theme (calm) ─────────────────────────────────────────────────────
 info "GRUB theme: calm"
 if command -v grub-mkconfig >/dev/null 2>&1 && [ -d /boot/grub ]; then
-  sudo bash "$REPO/grub-calm/install.sh" >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
+  GT="$REPO/grub-calm"
+  sudo mkdir -p /boot/grub/themes/calm
+  sudo cp -f "$GT"/theme.txt "$GT"/background.png "$GT"/font-*.pf2 "$GT"/select_*.png /boot/grub/themes/calm/
+  sudo cp -f /etc/default/grub "/etc/default/grub.bak.$(date +%Y%m%d-%H%M%S)"
+  if grep -q '^GRUB_THEME=' /etc/default/grub; then
+    sudo sed -i 's#^GRUB_THEME=.*#GRUB_THEME="/boot/grub/themes/calm/theme.txt"#' /etc/default/grub
+  else
+    echo 'GRUB_THEME="/boot/grub/themes/calm/theme.txt"' | sudo tee -a /etc/default/grub >/dev/null
+  fi
+  if grep -q '^GRUB_GFXMODE=' /etc/default/grub; then
+    sudo sed -i 's#^GRUB_GFXMODE=.*#GRUB_GFXMODE=1920x1080,auto#' /etc/default/grub
+  else
+    echo 'GRUB_GFXMODE=1920x1080,auto' | sudo tee -a /etc/default/grub >/dev/null
+  fi
+  sudo grub-mkconfig -o /boot/grub/grub.cfg >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
 else
   warn "grub not detected — skipping grub theme"
 fi
@@ -169,8 +183,41 @@ Changing the wallpaper regenerates the palette with `wal`; `bin/pywal-reload.sh`
 - `wb-*.sh` — the waybar module scripts
 
 ## Dependencies
-hyprland hyprlock hypridle waybar wofi rofi swaync kitty cava fastfetch btop wlogout
-pywal16 swww brightnessctl playerctl wpctl nmcli blueman + **[meowrch](https://github.com/meowrch/meowrch)** (wallpaper/theme engine, cloned separately).
+
+`setup.sh` installs **everything** for you. To do it manually — or just grab the essentials:
+
+**Bootstrap prerequisite** (on a fresh install, to clone + build the AUR helper):
+```bash
+sudo pacman -S --needed git base-devel
+```
+
+**Exact restore** — install the full snapshot this repo ships:
+```bash
+sudo pacman -S --needed - < packages/pacman.txt    # official repos
+paru      -S --needed - < packages/aur.txt          # AUR (paru is bootstrapped by setup.sh)
+```
+
+**Core rice stack** (the essentials, official repos):
+```bash
+sudo pacman -S --needed \
+  hyprland hyprlock hypridle waybar wofi rofi swaync \
+  kitty cava fastfetch btop imagemagick \
+  pipewire pipewire-pulse wireplumber pavucontrol \
+  networkmanager bluez bluez-utils blueman \
+  brightnessctl playerctl cliphist wl-clipboard flameshot \
+  xdg-desktop-portal-hyprland polkit-gnome qt5ct qt6ct udiskie \
+  ttf-jetbrains-mono-nerd starship zsh grub efibootmgr os-prober
+```
+
+**Core AUR** (via `paru`):
+```bash
+paru -S --needed swww wlogout python-pywal16 bibata-cursor-theme-bin \
+  brave-bin vesktop visual-studio-code-bin lavat-git pipes.sh cbonsai
+```
+
+**NVIDIA** (this laptop): `nvidia-open-dkms nvidia-utils nvidia-settings nvidia-prime` — swap for your GPU.
+
+Also needed: **[meowrch](https://github.com/meowrch/meowrch)** (wallpaper/theme engine, cloned separately) and the **scrolloverview** Hyprland plugin (`hyprpm add https://github.com/yayuuu/hyprland-scroll-overview`) — both handled by `setup.sh`.
 
 ## Notes
 - Paths are hardcoded for user `Void` — adjust if you clone.
