@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────
+#  calm — a cool, title-less GRUB theme  (JetBrains Mono · night)
+# ─────────────────────────────────────────────────────────────
+desktop-image: "background.png"
+desktop-color: "#0c0d18"
+title-text: ""
+terminal-font: "JetBrains Mono Regular 16"
+
+# ── boot menu (centered, no title) ──
++ boot_menu {
+    left   = 34%
+    width  = 32%
+    top    = 40%
+    height = 34%
+    item_font           = "JetBrains Mono Regular 16"
+    item_color          = "#6a739c"
+    selected_item_font  = "JetBrains Mono Regular 16"
+    selected_item_color = "#e6ecff"
+    selected_item_pixmap_style = "select_*.png"
+    item_height   = 36
+    item_padding  = 12
+    item_spacing  = 8
+    icon_width    = 0
+    icon_height   = 0
+    item_icon_space = 0
+    scrollbar = false
+}
+
+# ── countdown ──
++ label {
+    id     = "__timeout__"
+    top    = 80%
+    left   = 0
+    width  = 100%
+    align  = "center"
+    color  = "#7982b0"
+    font   = "JetBrains Mono Regular 14"
+    text   = "booting in %d s   ·   press a key to pause"
+}

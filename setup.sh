@@ -30,6 +30,7 @@ cat <<EOF
    3. enable services  (sddm · NetworkManager · bluetooth · pipewire · meowrch-pywal)
    4. set zsh + oh-my-zsh + plugins + .zshrc
    5. install the scrolloverview Hyprland plugin (hyprpm)
+   6. install the calm GRUB theme
 EOF
 read -rp "  Continue? [y/N] " a; [[ "${a,,}" == y ]] || die "Aborted."
 
@@ -95,6 +96,14 @@ if command -v hyprpm >/dev/null 2>&1 && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" 
 else
   warn "not in a Hyprland session — after first login run:"
   printf "        hyprpm update && hyprpm add https://github.com/yayuuu/hyprland-scroll-overview && hyprpm enable scrolloverview\n"
+fi
+
+# ── 7. GRUB theme (calm) ─────────────────────────────────────────────────────
+info "GRUB theme: calm"
+if command -v grub-mkconfig >/dev/null 2>&1 && [ -d /boot/grub ]; then
+  sudo bash "$REPO/grub-calm/install.sh" >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
+else
+  warn "grub not detected — skipping grub theme"
 fi
 
 # ── done ─────────────────────────────────────────────────────────────────────
