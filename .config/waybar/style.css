@@ -67,11 +67,11 @@ window#waybar {
     border: 2px solid @foreground;
 }
 
-/* --- 💎 SYSTEM MODULES / SİSTEM MODÜLLERİ --- */
+/* --- 💎 SYSTEM MODULES  --- */
 #clock, 
 #custom-volume, 
 #tray, 
-#cpu, 
+#custom-cpu, 
 #memory, 
 #custom-headset, 
 #custom-notification, 
@@ -93,7 +93,47 @@ window#waybar {
     transition: all 0.3s ease;
 }
 
-/* 🎧 HEADSET (SteelSeries) SPECIAL TUNING */
+/* --- 📦 GROUPED BOXES (space-saving) --- */
+/* [EN] GPU+CPU+RAM and Volume+Mic each render inside one shared pill. */
+#sysmon,
+#audio {
+    background-color: @background;
+    color: @foreground;
+    border: 2px solid @color9;
+    border-radius: 15px;
+    margin: 5px 2px;
+    padding: 0px 4px;
+    transition: all 0.3s ease;
+}
+
+/* [EN] Children sit flush inside the shared box: no own border/bg/margin. */
+#sysmon #custom-gpu,
+#sysmon #custom-cpu,
+#sysmon #memory,
+#audio #custom-volume,
+#audio #custom-mic {
+    background-color: transparent;
+    color: @foreground;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0px 6px;
+}
+
+/* [EN] Hover flips the whole group, not just one child. */
+#sysmon:hover,
+#audio:hover {
+    background-color: @color9;
+}
+#sysmon:hover #custom-gpu,
+#sysmon:hover #custom-cpu,
+#sysmon:hover #memory,
+#audio:hover #custom-volume,
+#audio:hover #custom-mic {
+    color: @background;
+}
+
+/* 🎧 HEADSET SPECIAL TUNING */
 #custom-headset {
     padding: 0px 12px;
     margin: 5px 2px;
@@ -138,7 +178,7 @@ window#waybar {
 #custom-headset:hover, 
 #tray:hover, 
 #memory:hover, 
-#cpu:hover, 
+#custom-cpu:hover, 
 #custom-gpu:hover,
 #custom-updates:hover,
 #custom-network:hover,

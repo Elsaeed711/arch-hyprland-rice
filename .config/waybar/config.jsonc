@@ -20,26 +20,36 @@
     "gtk-layer-shell": true,
 
     /* [TR] Modül Dizilimleri / [EN] Module Layouts */
-    "modules-left": ["clock", "custom/volume", "custom/brightness", "custom/mic", "custom/media", "wlr/taskbar"],
+    "modules-left": ["clock", "group/audio", "custom/brightness", "custom/media", "wlr/taskbar"],
     "modules-center": ["hyprland/workspaces"],
     "modules-right": [
         "tray",
         "custom/updates",
-        "custom/gpu",
-        "cpu",
-        "memory",
+        "group/sysmon",
         "custom/network",
-        "custom/bluetooth",
         "custom/battery",
         "custom/separator",
+        "custom/bluetooth",
         "custom/notification",
         "custom/power"
     ],
 
+    /* [EN] Grouped boxes to save space: GPU+CPU+RAM together, Volume+Mic together */
+    "group/sysmon": {
+        "orientation": "horizontal",
+        "modules": ["custom/gpu", "custom/cpu", "memory"]
+    },
+    "group/audio": {
+        "orientation": "horizontal",
+        "modules": ["custom/volume", "custom/mic"]
+    },
+
     /* [TR] Saat ve Tarih / [EN] Clock & Date */
     "clock": {
         "format": " {:%H:%M:%S %p}",
-        "interval": 1
+        "interval": 1,
+        "tooltip": false,
+        "on-click": "~/bin/wb-calendar.sh"
     },
 
     /* [TR] Ses Kontrolü / [EN] Audio Control */
@@ -48,8 +58,8 @@
         "interval": 1,
         "on-click": "pavucontrol",
         "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
-        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+        "on-scroll-up": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-",
         "tooltip": false
     },
 
@@ -69,17 +79,21 @@
     },
 
     /* [TR] İşlemci Kullanımı / [EN] CPU Usage */
-    "cpu": {
-        "interval": 1,
-        "format": " {usage}%",
-        "on-click": "tilix -e btop"
+    "custom/cpu": {
+        "exec": "~/bin/wb-cpu.sh",
+        "return-type": "json",
+        "interval": 2,
+        "tooltip": true,
+        "on-click": "kitty -e btop"
     },
 
     /* [TR] Bellek Kullanımı / [EN] Memory Usage */
     "memory": {
         "interval": 1, 
         "format": "  {used:0.1f}G/{total:0.1f}G", 
-        "on-click": "tilix -e btop"
+        "tooltip": true,
+        "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G ({percentage}%)\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G",
+        "on-click": "kitty -e btop"
     },
 
     "custom/updates": {

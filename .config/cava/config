@@ -1,8 +1,21 @@
 # pywal-generated cava config — gradient synced to the wallpaper.
+# Smoothing/EQ tuned for an "orchestrated" feel: flowing, connected waves with a
+# balanced full-spectrum response rather than a jittery bass-heavy bounce.
+
 [general]
 framerate = 60
-bars = 0
+# Hot-reload this file when pywal rewrites it on a wallpaper change.
 live-config = 1
+# Auto-adjust gain so quiet and loud passages both fill the bars gracefully.
+autosens = 1
+sensitivity = 100
+# 0 = fit as many bars as the width allows.
+bars = 0
+bar_width = 2
+bar_spacing = 1
+# Open up the range so the whole orchestra is represented (deep lows -> airy highs).
+lower_cutoff_freq = 30
+higher_cutoff_freq = 16000
 
 # Follow the active audio output (laptop speakers OR the buds) so cava
 # always visualizes whatever you're actually hearing.
@@ -10,17 +23,37 @@ live-config = 1
 method = pipewire
 source = auto
 
+[output]
+method = ncurses
+# Stereo paints a symmetric left/right sweep from the centre — elegant, conductor-like.
+channels = stereo
+mono_option = average
+
 [color]
 gradient = 1
 gradient_count = 8
-gradient_color_1 = '#455C71'
-gradient_color_2 = '#022E8B'
-gradient_color_3 = '#04548E'
-gradient_color_4 = '#0F5A9A'
-gradient_color_5 = '#086498'
-gradient_color_6 = '#016DAA'
-gradient_color_7 = '#c1c3c5'
-gradient_color_8 = '#59616e'
+gradient_color_1 = '#DF6374'
+gradient_color_2 = '#F7906B'
+gradient_color_3 = '#664D87'
+gradient_color_4 = '#803F81'
+gradient_color_5 = '#A55685'
+gradient_color_6 = '#D16186'
+gradient_color_7 = '#c2c4c7'
+gradient_color_8 = '#5d6272'
 
 [smoothing]
-noise_reduction = 0.77
+# 0-100: higher = smoother/slower. 75 keeps it flowing yet responsive.
+noise_reduction = 75
+# Monstercat + waves couple neighbouring bars so peaks rise and fall as one
+# graceful wave — the "maestro leading the section" motion.
+monstercat = 1.6
+waves = 1
+
+[eq]
+# Gentle upward tilt: tame the sub-bass thump, let mids and highs sing so every
+# section of the spectrum participates instead of bass dominating.
+1 = 0.9
+2 = 1.0
+3 = 1.1
+4 = 1.2
+5 = 1.3

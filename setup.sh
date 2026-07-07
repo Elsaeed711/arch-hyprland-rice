@@ -28,7 +28,7 @@ cat <<EOF
    1. install packages  ($(wc -l < "$REPO/packages/pacman.txt") repo + $(wc -l < "$REPO/packages/aur.txt") AUR)
    2. deploy .config + bin  (existing ~/.config is backed up first)
    3. enable services  (sddm · NetworkManager · bluetooth · pipewire · meowrch-pywal)
-   4. set zsh + oh-my-zsh
+   4. set zsh + oh-my-zsh + plugins + .zshrc
    5. install the scrolloverview Hyprland plugin (hyprpm)
 EOF
 read -rp "  Continue? [y/N] " a; [[ "${a,,}" == y ]] || die "Aborted."
@@ -75,12 +75,16 @@ systemctl --user enable pipewire.socket pipewire-pulse.socket wireplumber.servic
 systemctl --user enable meowrch-pywal.path 2>>"$LOG"
 ok "user services"
 
-# ── 5. shell ─────────────────────────────────────────────────────────────────
-info "Shell (zsh + oh-my-zsh)"
+# ── 5. shell (zsh + oh-my-zsh + plugins + .zshrc) ────────────────────────────
+info "Shell (zsh + oh-my-zsh + plugins)"
 [ -d "$HOME/.oh-my-zsh" ] || RUNZSH=no CHSH=no \
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended >>"$LOG" 2>&1
+ZC="$HOME/.oh-my-zsh/custom/plugins"
+[ -d "$ZC/zsh-autosuggestions" ]     || git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions     "$ZC/zsh-autosuggestions"     >>"$LOG" 2>&1
+[ -d "$ZC/zsh-syntax-highlighting" ] || git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting "$ZC/zsh-syntax-highlighting" >>"$LOG" 2>&1
+[ -f "$REPO/.zshrc" ] && cp -f "$REPO/.zshrc" "$HOME/.zshrc" && ok ".zshrc deployed"
 [ "$(getent passwd "$USER" | cut -d: -f7)" = "/usr/bin/zsh" ] || chsh -s /usr/bin/zsh 2>>"$LOG"
-ok "zsh set as login shell"
+ok "zsh + oh-my-zsh + plugins"
 
 # ── 6. Hyprland plugin (scrolloverview) ──────────────────────────────────────
 info "Hyprland plugin: scrolloverview"
