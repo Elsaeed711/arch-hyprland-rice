@@ -6,6 +6,16 @@ desktop-color: "#0c0d18"
 title-text: ""
 terminal-font: "JetBrains Mono Regular 16"
 
+# When an entry is selected, GRUB switches to its text terminal. Make that
+# terminal FULLSCREEN (not a centered box): the instant you pick Arch, the
+# themed menu is replaced by a full-screen black console showing the boot/
+# "Loading Linux ..." messages, which then hands off to Plymouth. No box.
+terminal-border: "0"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+
 # ── boot menu (centered, no title) ──
 + boot_menu {
     left   = 34%

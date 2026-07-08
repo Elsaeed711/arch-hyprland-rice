@@ -126,6 +126,7 @@ pipewire
 pipewire-alsa
 pipewire-pulse
 playerctl
+plymouth
 polkit-gnome
 polybar
 postgresql

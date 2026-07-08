@@ -31,6 +31,7 @@ cat <<EOF
    4. set zsh + oh-my-zsh + plugins + .zshrc
    5. install the scrolloverview Hyprland plugin (hyprpm)
    6. install the calm GRUB theme
+   7. smooth boot: Plymouth splash + quiet / NVIDIA early-KMS
 EOF
 read -rp "  Continue? [y/N] " a; [[ "${a,,}" == y ]] || die "Aborted."
 
@@ -115,9 +116,39 @@ if command -v grub-mkconfig >/dev/null 2>&1 && [ -d /boot/grub ]; then
   else
     echo 'GRUB_GFXMODE=1920x1080,auto' | sudo tee -a /etc/default/grub >/dev/null
   fi
-  sudo grub-mkconfig -o /boot/grub/grub.cfg >>"$LOG" 2>&1 && ok "calm grub theme installed" || warn "grub theme step failed — see setup.log"
+  # quiet, splash-ready boot; also hide systemd [ OK ] status (incl. at shutdown)
+  sudo sed -i 's#^GRUB_CMDLINE_LINUX_DEFAULT=.*#GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet splash systemd.show_status=false rd.udev.log_level=3 vt.global_cursor_default=0 nvidia_drm.modeset=1"#' /etc/default/grub
+  sudo grub-mkconfig -o /boot/grub/grub.cfg >>"$LOG" 2>&1
+  # theme.txt makes GRUB's terminal fullscreen; strip the "Loading Linux ..." echoes
+  # so picking an entry shows a clean fullscreen console instead of a boxed one
+  sudo sed -i '/^[[:space:]]*echo[[:space:]].*Loading/d' /boot/grub/grub.cfg
+  ok "calm grub theme + quiet boot"
 else
   warn "grub not detected — skipping grub theme"
+fi
+
+# ── 8. smooth boot: Plymouth splash + NVIDIA early-KMS ───────────────────────
+# NOTE: keep backups OFF the ESP if it's small — a big initramfs backup can fill it.
+info "Plymouth splash + smooth boot"
+if command -v mkinitcpio >/dev/null 2>&1; then
+  sudo pacman -S --needed --noconfirm plymouth >>"$LOG" 2>&1
+  # custom calm plymouth theme (swap for any adi1090x theme if you prefer)
+  sudo mkdir -p /usr/share/plymouth/themes/calm
+  sudo cp -f "$REPO"/plymouth-calm/* /usr/share/plymouth/themes/calm/ 2>>"$LOG"
+  sudo plymouth-set-default-theme calm >>"$LOG" 2>&1
+  # plymouth hook right after 'systemd' in HOOKS
+  grep -q 'plymouth' /etc/mkinitcpio.conf || \
+    sudo sed -i 's/^HOOKS=(base systemd /HOOKS=(base systemd plymouth /' /etc/mkinitcpio.conf
+  # NVIDIA early-KMS (only if an nvidia driver is installed) -> no boot mode-switch flash
+  if pacman -Qq 2>/dev/null | grep -q '^nvidia'; then
+    sudo sed -i 's/^MODULES=(.*)/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
+  fi
+  sudo mkinitcpio -P >>"$LOG" 2>&1 && ok "plymouth + initramfs rebuilt" || warn "mkinitcpio failed — see setup.log"
+  # clean black shutdown (no splash, no [ OK ] spam)
+  sudo systemctl mask plymouth-poweroff.service plymouth-reboot.service plymouth-halt.service >>"$LOG" 2>&1
+  ok "smooth boot configured"
+else
+  warn "mkinitcpio not found — skipping plymouth"
 fi
 
 # ── done ─────────────────────────────────────────────────────────────────────

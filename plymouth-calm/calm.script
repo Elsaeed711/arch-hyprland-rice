@@ -1,0 +1,52 @@
+# calm — plymouth script theme
+# A moonlit background with a glowing, breathing spinner that rotates.
+
+# ---------- background (scaled to the screen) ----------
+screen_width  = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+bg = Image("background.png");
+bg = bg.Scale(screen_width, screen_height);
+bg_sprite = Sprite(bg);
+bg_sprite.SetX(0);
+bg_sprite.SetY(0);
+bg_sprite.SetZ(-100);
+
+# ---------- spinner ----------
+spinner_image = Image("spinner.png");
+spinner_sprite = Sprite();
+cx = screen_width  / 2;
+cy = screen_height / 2;
+
+angle     = 0;
+pulse     = 0;
+pulse_dir = 1;
+
+fun refresh () {
+    # rotate
+    angle = angle + 0.06;
+    if (angle > 6.2832) { angle = angle - 6.2832; }
+    rot = spinner_image.Rotate(angle);
+    spinner_sprite.SetImage(rot);
+    spinner_sprite.SetX(cx - rot.GetWidth()  / 2);
+    spinner_sprite.SetY(cy - rot.GetHeight() / 2);
+    spinner_sprite.SetZ(10);
+
+    # breathing glow (triangle wave, no math libs needed)
+    pulse = pulse + pulse_dir * 0.015;
+    if (pulse > 1) { pulse = 1; pulse_dir = -1; }
+    if (pulse < 0) { pulse = 0; pulse_dir =  1; }
+    spinner_sprite.SetOpacity(0.55 + pulse * 0.45);
+}
+Plymouth.SetRefreshFunction(refresh);
+
+# ---------- keep boot/quit clean ----------
+fun quit_cb () {
+    spinner_sprite.SetOpacity(0);
+    bg_sprite.SetOpacity(0);
+}
+Plymouth.SetQuitFunction(quit_cb);
+
+# swallow status messages so nothing text-y flashes over the splash
+fun message_cb (text) { }
+Plymouth.SetMessageFunction(message_cb);

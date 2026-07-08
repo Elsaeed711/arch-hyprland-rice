@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Calm
+Description=Calm night boot theme — glowing spinner over a moonlit scene
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/calm
+ScriptFile=/usr/share/plymouth/themes/calm/calm.script
